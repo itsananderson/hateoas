@@ -10,6 +10,10 @@ function hateoas(options) {
         throw Error("Missing required argument 'baseUrl'");
     }
 
+    if (options.baseUrl[options.baseUrl.length-1] == "/") {
+        options.baseUrl = options.baseUrl.substring(0, options.baseUrl.length-1);
+    }
+
     var linkHandlers = {};
 
     function registerLinkHandler(type, handler) {
@@ -21,13 +25,23 @@ function hateoas(options) {
 
     function getLinks(type, data) {
         if (linkHandlers[type]) {
-            return linkHandlers[type]
+            var links = linkHandlers[type]
                 .map(function(handler) {
                     return handler(data, type);
                 })
                 .reduce(function(prev, curr) {
                     return extend({}, prev, curr);
                 }, {});
+            return Object.keys(links).reduce(function(prev, key) {
+                var value = links[key];
+                if (value.length && value[0] === "/") {
+                    value = options.baseUrl + value;
+                }
+                prev[key] = value;
+                return prev;
+            }, {});
+        } else {
+            return {};
         }
     }
 
