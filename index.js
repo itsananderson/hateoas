@@ -1,7 +1,15 @@
 var extend = require('extend');
 
-function hateoas(baseUrl) {
-    if (!baseUrl) throw Error("Missing required argument 'baseUrl'");
+var defaultOptions = {
+    propName: "links"
+};
+
+function hateoas(options) {
+    options = extend({}, defaultOptions, options);
+    if (!options.baseUrl) {
+        throw Error("Missing required argument 'baseUrl'");
+    }
+
     var linkHandlers = {};
 
     function registerLinkHandler(type, handler) {
@@ -18,13 +26,13 @@ function hateoas(baseUrl) {
                     return handler(data, type);
                 })
                 .reduce(function(prev, curr) {
-                    return extend(prev, curr);
+                    return extend({}, prev, curr);
                 }, {});
         }
     }
 
     function link(type, data) {
-        data.links = getLinks(type, data);
+        data[options.propName] = getLinks(type, data);
     }
 
     return {

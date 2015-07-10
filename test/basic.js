@@ -3,7 +3,7 @@ var assert = require("assert");
 
 describe("hateoas", function() {
     it("can be called", function() {
-        var hateoas = createHateoas("http://localhost/");
+        var hateoas = createHateoas({baseUrl: "http://localhost/"});
         assert(hateoas);
     });
 
