@@ -1,0 +1,26 @@
+{
+  "name": "hateoas-example-express",
+  "version": "1.0.0",
+  "description": "An example of using hateoas with an Express API",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/itsananderson/hateoas.git"
+  },
+  "keywords": [
+    "hateoas",
+    "express"
+  ],
+  "author": "Will Anderson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/itsananderson/hateoas/issues"
+  },
+  "homepage": "https://github.com/itsananderson/hateoas#readme",
+  "dependencies": {
+    "express": "^4.13.1"
+  }
+}
