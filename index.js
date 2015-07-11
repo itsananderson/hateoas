@@ -28,6 +28,7 @@ function hateoas(options) {
         if (!collectionLinkHandlers[type]) {
             collectionLinkHandlers[type] = [];
         }
+
         collectionLinkHandlers[type].push(handler);
     }
 
