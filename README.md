@@ -30,7 +30,7 @@ hateoas.registerCollectionLinkHandler("user", function(userCollection) {
         "self": "/users"
     };
 
-    if (isAdmin() {
+    if (isAdmin()) {
         links["create"] = "/users"
     }
     
