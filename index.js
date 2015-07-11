@@ -15,6 +15,7 @@ function hateoas(options) {
     }
 
     var linkHandlers = {};
+    var collectionLinkHandlers = {};
 
     function registerLinkHandler(type, handler) {
         if (!linkHandlers[type]) {
@@ -23,34 +24,64 @@ function hateoas(options) {
         linkHandlers[type].push(handler);
     }
 
-    function getLinks(type, data) {
-        if (linkHandlers[type]) {
-            var links = linkHandlers[type]
-                .map(function(handler) {
-                    return handler(data, type);
-                })
-                .reduce(function(prev, curr) {
-                    return extend({}, prev, curr);
-                }, {});
-            return Object.keys(links).reduce(function(prev, key) {
-                var value = links[key];
-                if (value.length && value[0] === "/") {
-                    value = options.baseUrl + value;
-                }
-                prev[key] = value;
-                return prev;
+    function registerCollectionLinkHandler(type, handler) {
+        if (!collectionLinkHandlers[type]) {
+            collectionLinkHandlers[type] = [];
+        }
+        collectionLinkHandlers[type].push(handler);
+    }
+
+    function prefix(link) {
+        if (!link.length || link[0] !== "/") {
+            return link;
+        }
+
+        return options.baseUrl + link;
+    }
+
+    function getLinksGeneric(handlers, type, data) {
+        if (handlers[type]) {
+            var links = handlers[type].reduce(function(links, handler) {
+                return extend({}, links, handler(data, type, links));
+            }, {});
+
+            return Object.keys(links).reduce(function(prefixedLinks, linkName) {
+                prefixedLinks[linkName] = prefix(links[linkName]);
+                return prefixedLinks;
             }, {});
         } else {
-            return {};
+            return [];
         }
     }
 
-    function link(type, data) {
-        data[options.propName] = getLinks(type, data);
+    var getLinks = getLinksGeneric.bind(null, linkHandlers);
+    var getCollectionLinks = getLinksGeneric.bind(null, collectionLinkHandlers);
+
+    function linkCollection(type, collection) {
+        var result = {
+            data: collection.map(link.bind(null, type))
+        };
+        result[options.propName] = getCollectionLinks(type, collection);
+        return result;
     }
+
+    function link(type, data) {
+        if (Array.isArray(data)) {
+            return linkCollection(type, data);
+        }
+
+        if (linkHandlers[type]) {
+            data[options.propName] = getLinks(type, data);
+            return data;
+        } else {
+            return data;
+        }
+    }
+
 
     return {
         registerLinkHandler: registerLinkHandler,
+        registerCollectionLinkHandler: registerCollectionLinkHandler,
         getLinks: getLinks,
         link: link
     };

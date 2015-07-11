@@ -13,7 +13,6 @@ describe("hateoas link registration", function() {
             return {"test": "test"};
         });
         var links = hateoas.getLinks("test", null);
-        console.log(links);
         assert.equal(Object.keys(links).length, 1); //, "Invalid number of links returned"
         assert.equal(links.test, "test", "Expected 'test' link to have value 'test'");
     });
