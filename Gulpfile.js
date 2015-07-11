@@ -23,6 +23,6 @@ gulp.task("test-nobreak", function() {
         .pipe(mocha({fullTrace: true}));
 });
 
-gulp.task("watch", function() {
+gulp.task("watch", ["test-nobreak"], function() {
     gulp.watch(["index.js", "test/*.js", "test/**/*.js"], ["test-nobreak"]);
 });
