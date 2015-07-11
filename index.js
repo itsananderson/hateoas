@@ -61,7 +61,15 @@ function hateoas(options) {
         var result = {
             data: collection.map(link.bind(null, type))
         };
-        result[options.propName] = getCollectionLinks(type, collection);
+
+        var links = getCollectionLinks(type, collection);
+
+        if (options.propName) {
+            result[options.propName] = links;
+        } else {
+            extend(result, links);
+        }
+
         return result;
     }
 
@@ -71,7 +79,14 @@ function hateoas(options) {
         }
 
         if (linkHandlers[type]) {
-            data[options.propName] = getLinks(type, data);
+            var links = getLinks(type, data);
+
+            if (options.propName) {
+                data[options.propName] = links;
+            } else {
+                extend(data, links);
+            }
+
             return data;
         } else {
             return data;
