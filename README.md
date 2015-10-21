@@ -11,7 +11,7 @@ hateoas.registerLinkHandler("root", function() {
         "self": "/",
         "users": "/users"
     };
-}
+});
 
 hateoas.registerLinkHandler("user", function(user) {
     var links = {
